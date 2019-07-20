@@ -2,10 +2,10 @@ version: '3.1'
 services:
   web:
     build: 
-      context: ./web
+      context: ./wedding-site
       dockerfile: Dockerfile.dev
     volumes:
-       - ./web:/code
+       - ./wedding-site:/code
     ports:
       - '80:4200'
     links:
@@ -14,10 +14,10 @@ services:
     - 'api'
   api:
     build: 
-      context: ./api
+      context: ./wedding-api
       dockerfile: Dockerfile.dev
     volumes:
-       - ./api:/code
+       - ./wedding-api:/code
     ports:
       - '8080:3001'
   mongo:

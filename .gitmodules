@@ -1,0 +1,6 @@
+[submodule "wedding-site"]
+	path = wedding-site
+	url = https://bitbucket.org/jackson147/wedding-site
+[submodule "wedding-api"]
+	path = wedding-api
+	url = https://bitbucket.org/jackson147/wedding-api

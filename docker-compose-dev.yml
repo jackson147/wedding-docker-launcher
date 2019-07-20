@@ -1,0 +1,26 @@
+version: '3.1'
+services:
+  web:
+    build: 
+      context: ./web
+      dockerfile: Dockerfile.dev
+    volumes:
+       - ./web:/code
+    ports:
+      - '80:4200'
+    links:
+      - api
+    depends_on:
+    - 'api'
+  api:
+    build: 
+      context: ./api
+      dockerfile: Dockerfile.dev
+    volumes:
+       - ./api:/code
+    ports:
+      - '8080:3001'
+  mongo:
+    image: mongo
+    ports:
+      - '27017:27017'

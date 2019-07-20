@@ -1,0 +1,47 @@
+version: '3.1'
+services:
+  web:
+    image: jackson147/wedding-site:latest
+    build: ./web
+    ports:
+      - '80:80'
+      - '443:443'
+    secrets:
+      - server.ca
+      - server.crt
+      - server.key
+  api:
+    image: jackson147/wedding-api:latest
+    build: ./api
+    ports:
+      - '8080:3001'
+    secrets:
+      - server.ca
+      - server.crt
+      - server.key
+  mongo:
+    image: mongo
+    volumes:
+    - ./db:/data/db
+  ouroboros:
+    container_name: ouroboros
+    hostname: ouroboros
+    image: pyouroboros/ouroboros
+    environment:
+      - CLEANUP=true
+      - INTERVAL=300
+      - LOG_LEVEL=info
+      - SELF_UPDATE=true
+      - IGNORE=mongo influxdb postgres mariadb
+    restart: unless-stopped
+    volumes:
+      - /root/.docker/config.json:/root/.docker/config.json
+      - /var/run/docker.sock:/var/run/docker.sock
+
+secrets:
+  server.ca:
+    external: true
+  server.crt:
+    external: true
+  server.key:
+    external: true

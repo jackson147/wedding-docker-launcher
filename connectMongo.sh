@@ -1,0 +1,1 @@
+sudo docker exec -it $(sudo docker ps | grep mongo | awk '{print $1}') mongo wedding

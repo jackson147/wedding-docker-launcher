@@ -8,10 +8,6 @@ services:
        - ./wedding-site:/code
     ports:
       - '80:4200'
-    links:
-      - api
-    depends_on:
-    - 'api'
   api:
     build: 
       context: ./wedding-api
@@ -20,6 +16,10 @@ services:
        - ./wedding-api:/code
     ports:
       - '8080:3001'
+    links:
+      - mongo
+    depends_on:
+      - mongo
   mongo:
     image: mongo
     ports:

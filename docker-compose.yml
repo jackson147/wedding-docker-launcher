@@ -19,6 +19,10 @@ services:
       - server.ca
       - server.crt
       - server.key
+    links:
+      - mongo
+    depends_on:
+      - mongo
   mongo:
     image: mongo
     volumes:

@@ -27,6 +27,7 @@ services:
     image: mongo
     volumes:
     - ./db:/data/db
+    - ./backups:/backups
 
 secrets:
   server.ca:

@@ -46,3 +46,4 @@ web/node_modules
 api/node_module
 api/node_modules
 db/
+backups/

@@ -22,5 +22,8 @@ services:
       - mongo
   mongo:
     image: mongo
+    volumes:
+      - ./db:/data/db
+      - ./backups:/backups
     ports:
       - '27017:27017'

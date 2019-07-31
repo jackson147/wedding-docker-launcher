@@ -1,0 +1,1 @@
+sudo docker exec -it $(sudo docker ps | grep mongo | awk '{print $1}') mongorestore  --gzip --db wedding /backups/2019-07-31/wedding

@@ -1,0 +1,46 @@
+version: "3.3"
+
+services:
+  wedding-site:
+    image: jackson147/wedding-site:latest
+    networks:
+      - web
+    deploy:
+      labels:
+        - "traefik.enable=true" # <== Enable traefik to proxy this container
+        - "traefik.http.routers.wedding-web-secured.rule=Host(`wedding-site.newlinkedlist.xyz`)"
+        - "traefik.http.routers.wedding-web-secured.entrypoints=web-secured" # <== Defining entrypoint for https, **ref: line 31
+        - "traefik.http.routers.wedding-web-secured.tls=true"
+        - "traefik.http.services.wedding-site.loadbalancer.server.port=80"
+  wedding-api:
+    image: jackson147/wedding-api:latest
+    links:
+      - mongo
+    depends_on:
+      - mongo
+    networks:
+      - web
+      - backend
+    deploy:
+      labels:
+        - "traefik.enable=true" # <== Enable traefik to proxy this container
+        - "traefik.http.routers.wedding-api-secured.rule=Host(`wedding-api.newlinkedlist.xyz`)"
+        - "traefik.http.routers.wedding-api-secured.entrypoints=web-secured" # <== Defining entrypoint for https, **ref: line 31
+        - "traefik.http.routers.wedding-api-secured.tls=true"
+        - "traefik.http.services.wedding-api.loadbalancer.server.port=3001"
+  mongo:
+    image: mongo
+    volumes:
+      - mongodb:/data/db
+    networks:
+      - backend
+
+networks:
+  web:
+    external: true
+  backend:
+    external: false
+
+volumes:
+  mongodb:
+    external: true

@@ -1,0 +1,59 @@
+node {
+    def appApi
+    def apiProps
+    def apiVersion
+
+    def appUi
+    def uiProps
+    def uiVersion
+    
+
+    def remote = [:]
+    remote.name = "dev-server"
+    remote.host = "newlinkedlist.xyz"
+    remote.allowAnyHosts = true
+
+    stage('Clone repository') {
+        /* Let's make sure we have the repository cloned to our workspace */
+
+        checkout scm
+
+        apiProps = readJSON file: './wedding-api/package.json'
+        apiVersion = apiProps['version']
+
+        uiProps = readJSON file: './wedding-site/package.json'
+        uiVersion = uiProps['version']
+    }
+
+    stage('Build image') {
+        /* This builds the actual image; synonymous to
+        * docker build on the command line */
+
+        appApi = docker.build("jackson147/wedding-api", "-f wedding-api/Dockerfile wedding-api/")
+        appUi = docker.build("jackson147/wedding-site", "-f wedding-site/Dockerfile wedding-site/")
+    }
+
+    stage('Push image') {
+        /* Finally, we'll push the image with two tags:
+        * First, the incremental build number from Jenkins
+        * Second, the 'latest' tag.
+        * Pushing multiple tags is cheap, as all the layers are reused. */
+        docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
+            appApi.push(apiVersion)
+            appApi.push("latest")
+
+            appUi.push(uiVersion)
+            appUi.push("latest")
+        }
+    }
+
+    withCredentials([sshUserPrivateKey(credentialsId: '	dev-server', keyFileVariable: 'identity', passphraseVariable: '', usernameVariable: 'userName')]) {
+        remote.user = userName
+        remote.identityFile = identity
+        stage("Deploy") {
+            sshCommand remote: remote, command: 'mkdir -p ./deployments/wedding-docker-launcher/'
+            sshPut remote: remote, from: 'docker-compose-stack.yml', into: './deployments/wedding-docker-launcher/' , override: true
+            sshCommand remote: remote, command: 'docker stack rm wedding && sleep 10 && docker stack deploy -c ./deployments/wedding-docker-launcher/docker-compose-stack.yml wedding'
+        }
+    }
+}

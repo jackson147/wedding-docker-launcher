@@ -19,10 +19,10 @@ node {
         checkout scm
 
         apiProps = readJSON file: './wedding-api/package.json'
-        apiVersion = apiProps['version']
+        apiVersion = apiProps['version'] + "-dev"
 
         uiProps = readJSON file: './wedding-site/package.json'
-        uiVersion = uiProps['version']
+        uiVersion = uiProps['version'] + "-dev"
     }
 
     stage('Build image') {
@@ -40,10 +40,7 @@ node {
         * Pushing multiple tags is cheap, as all the layers are reused. */
         docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
             appApi.push(apiVersion)
-            appApi.push("latest")
-
             appUi.push(uiVersion)
-            appUi.push("latest")
         }
     }
 
@@ -51,11 +48,11 @@ node {
         remote.user = userName
         remote.identityFile = identity
         stage("Deploy") {
-            sshCommand remote: remote, command: 'mkdir -p ./deployments/wedding-docker-launcher/'
-            sshPut remote: remote, from: 'docker-compose-stack.yml', into: './deployments/wedding-docker-launcher/' , override: true
-            sshCommand remote: remote, command: 'sed -i "s/wedding-site:latest/wedding-site:' + uiVersion + '/g" ./deployments/wedding-docker-launcher/docker-compose-stack.yml'
-            sshCommand remote: remote, command: 'sed -i "s/wedding-api:latest/wedding-api:' + apiVersion + '/g" ./deployments/wedding-docker-launcher/docker-compose-stack.yml'
-            sshCommand remote: remote, command: 'docker stack rm wedding && sleep 10 && docker stack deploy -c ./deployments/wedding-docker-launcher/docker-compose-stack.yml wedding'
+            sshCommand remote: remote, command: 'mkdir -p ./deployments/wedding-docker-launcher-dev/'
+            sshPut remote: remote, from: 'docker-compose-stack.yml', into: './deployments/wedding-docker-launcher-dev/' , override: true
+            sshCommand remote: remote, command: 'sed -i "s/wedding-site:latest/wedding-site:' + uiVersion + '/g" ./deployments/wedding-docker-launcher-dev/docker-compose-stack.yml'
+            sshCommand remote: remote, command: 'sed -i "s/wedding-api:latest/wedding-api:' + apiVersion + '/g" ./deployments/wedding-docker-launcher-dev/docker-compose-stack.yml'
+            sshCommand remote: remote, command: 'docker stack rm wedding && sleep 10 && docker stack deploy -c ./deployments/wedding-docker-launcher-dev/docker-compose-stack.yml wedding'
         }
     }
 }

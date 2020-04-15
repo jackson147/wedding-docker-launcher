@@ -55,7 +55,7 @@ node {
             sshPut remote: remote, from: 'docker-compose-stack.yml', into: './deployments/wedding-docker-launcher/' , override: true
             sshCommand remote: remote, command: 'sed -i "s/wedding-site:latest/wedding-site:' + uiVersion + '/g" ./deployments/wedding-docker-launcher/docker-compose-stack.yml'
             sshCommand remote: remote, command: 'sed -i "s/wedding-api:latest/wedding-api:' + apiVersion + '/g" ./deployments/wedding-docker-launcher/docker-compose-stack.yml'
-            sshCommand remote: remote, command: 'docker stack rm wedding && sleep 10 && docker stack deploy -c ./deployments/wedding-docker-launcher/docker-compose-stack.yml wedding'
+            sshCommand remote: remote, command: 'docker stack rm wedding && sleep 30 && docker stack deploy -c ./deployments/wedding-docker-launcher/docker-compose-stack.yml wedding'
         }
     }
 }

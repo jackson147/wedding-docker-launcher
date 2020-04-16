@@ -58,7 +58,7 @@ node {
             sshCommand remote: remote, command: 'sed -i "s/wedding-site.newlinkedlist.xyz/wedding-site-dev.newlinkedlist.xyz/g" ./deployments/wedding-docker-launcher-dev/docker-compose-stack.yml'
             sshCommand remote: remote, command: 'sed -i "s/wedding-api.newlinkedlist.xyz/wedding-api-dev.newlinkedlist.xyz/g" ./deployments/wedding-docker-launcher-dev/docker-compose-stack.yml'
             
-            sshCommand remote: remote, command: 'docker stack rm wedding && sleep 30 && docker stack deploy -c ./deployments/wedding-docker-launcher-dev/docker-compose-stack.yml wedding'
+            sshCommand remote: remote, command: 'docker stack rm wedding-dev && sleep 30 && docker stack deploy -c ./deployments/wedding-docker-launcher-dev/docker-compose-stack.yml wedding-dev'
         }
     }
 }

@@ -52,6 +52,12 @@ node {
             sshPut remote: remote, from: 'docker-compose-stack.yml', into: './deployments/wedding-docker-launcher-dev/' , override: true
             sshCommand remote: remote, command: 'sed -i "s/wedding-site:latest/wedding-site:' + uiVersion + '/g" ./deployments/wedding-docker-launcher-dev/docker-compose-stack.yml'
             sshCommand remote: remote, command: 'sed -i "s/wedding-api:latest/wedding-api:' + apiVersion + '/g" ./deployments/wedding-docker-launcher-dev/docker-compose-stack.yml'
+
+            sshCommand remote: remote, command: 'sed -i "s/wedding-web-secured/wedding-web-secured-dev/g" ./deployments/wedding-docker-launcher-dev/docker-compose-stack.yml'
+            sshCommand remote: remote, command: 'sed -i "s/wedding-api-secured/wedding-api-secured-dev/g" ./deployments/wedding-docker-launcher-dev/docker-compose-stack.yml'
+            sshCommand remote: remote, command: 'sed -i "s/wedding-site.newlinkedlist.xyz/wedding-site-dev.newlinkedlist.xyz/g" ./deployments/wedding-docker-launcher-dev/docker-compose-stack.yml'
+            sshCommand remote: remote, command: 'sed -i "s/wedding-api.newlinkedlist.xyz/wedding-api-dev.newlinkedlist.xyz/g" ./deployments/wedding-docker-launcher-dev/docker-compose-stack.yml'
+            
             sshCommand remote: remote, command: 'docker stack rm wedding && sleep 30 && docker stack deploy -c ./deployments/wedding-docker-launcher-dev/docker-compose-stack.yml wedding'
         }
     }
